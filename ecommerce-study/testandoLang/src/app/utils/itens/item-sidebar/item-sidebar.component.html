@@ -1,0 +1,17 @@
+<a
+  *ngFor="let item of titulosMenus"
+  [routerLink]="item.link"
+  class="no-underline flex flex-row my-5"
+   
+>
+  <div tuiCell="l">
+    <tui-avatar
+      appearance="primary"
+      src="@tui.house"
+    ></tui-avatar>
+
+    <div tuiTitle>
+      {{ item.titulo }}
+    </div>
+  </div>
+</a>
