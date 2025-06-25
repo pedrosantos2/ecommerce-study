@@ -1,12 +1,8 @@
-export interface Categoria {
-  id: number;
-  nome: string;
-}
-
+import { CategoriaModel } from './categoriaModel';
 export interface Product {
   id: number;
   nome: string;
   descricao: string;
   preco: number;
-  categoria: Categoria;
+  categoria: CategoriaModel;
 }

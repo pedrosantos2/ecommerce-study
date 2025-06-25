@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Modalform } from '../../components/modalform/modalform';
 import { Product } from '../../model/produto';
+import { produtoFields } from '../../model/produtofields';
 
 
 @Component({
@@ -19,6 +20,7 @@ import { Product } from '../../model/produto';
 export class Produto implements OnInit {
   products: Product[] = [];
   showModal = false;
+  produtoFields = produtoFields;
 
   constructor(private http: HttpClient) {}
 
@@ -47,6 +49,10 @@ export class Produto implements OnInit {
 
    onProductAdded(): void {
     this.closeModal();
-    this.loadProducts();     
+    this.loadProducts();
+  }
+
+  handleProdutoSubmit(produtoData: any) {
+    console.log('Produto enviado:', produtoData);
   }
 }

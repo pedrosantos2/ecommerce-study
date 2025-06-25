@@ -1,53 +1,59 @@
-<div class="overlay">
-  <div class="modal">
-    <h2>Cadastro de Produto</h2>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <!-- Nome -->
-      <div class="field">
-        <label for="nome">Nome</label>
-        <input id="nome" type="text" formControlName="nome"/>
-        <div *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" class="error">
-          Nome é obrigatório.
-        </div>
-      </div>
+<div class="py-12 bg-gray-700/25 fixed inset-0 z-10 flex items-center justify-center">
+  <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
+    <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400">
 
-      <!-- Descrição -->
-      <div class="field">
-        <label for="descricao">Descrição</label>
-        <textarea id="descricao" formControlName="descricao"></textarea>
-        <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="error">
-          Descrição é obrigatória.
-        </div>
-      </div>
+      <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4">Formulário Dinâmico</h1>
 
-      <!-- Preço -->
-      <div class="field">
-        <label for="preco">Preço</label>
-        <input id="preco" type="number" formControlName="preco"/>
-        <div *ngIf="form.get('preco')?.invalid && form.get('preco')?.touched" class="error">
-          Informe um preço válido.
-        </div>
-      </div>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <ng-container *ngFor="let field of fields">
+          <label [for]="field.name" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
+            {{ field.label }}
+          </label>
 
-      <!-- Categoria -->
-      <div class="field">
-        <label for="categoriaId">Categoria</label>
-        <select id="categoriaId" formControlName="categoriaId">
-          <option [value]="0" disabled>Selecione...</option>
-          <option [value]="1">Categoria A</option>
-          <option [value]="2">Categoria B</option>
-          <!-- adicione as opções reais aqui -->
-        </select>
-        <div *ngIf="form.get('categoriaId')?.invalid && form.get('categoriaId')?.touched" class="error">
-          Selecione uma categoria.
-        </div>
-      </div>
+          <ng-container [ngSwitch]="field.type">
+            <input *ngSwitchCase="'text'" [id]="field.name" [formControlName]="field.name"
+              class="mb-2 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 w-full h-10 pl-3 text-sm border-gray-300 rounded border"
+              [placeholder]="field.placeholder || ''" />
 
-      <!-- Ações -->
-      <div class="actions">
-        <button type="button" (click)="cancel.emit()">Cancelar</button>
-        <button type="submit" [disabled]="form.invalid">Enviar</button>
-      </div>
-    </form>
+            <input *ngSwitchCase="'number'" type="number" [id]="field.name" [formControlName]="field.name"
+              class="mb-2 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 w-full h-10 pl-3 text-sm border-gray-300 rounded border"
+              [placeholder]="field.placeholder || ''" />
+
+            <textarea *ngSwitchCase="'textarea'" [id]="field.name" [formControlName]="field.name"
+              class="mb-2 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 w-full p-2 text-sm border-gray-300 rounded border"
+              [placeholder]="field.placeholder || ''"></textarea>
+
+            <select *ngSwitchCase="'select'" [id]="field.name" [formControlName]="field.name"
+              class="mb-2 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 w-full h-10 pl-3 text-sm border-gray-300 rounded border">
+              <option value="">Selecione...</option>
+              <option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+          </ng-container>
+
+          <div *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched" class="text-red-500 text-xs mb-2">
+            {{ field.label }} é obrigatório.
+          </div>
+        </ng-container>
+
+        <div class="flex items-center justify-start w-full mt-4">
+        <button type="button" (click)="cancel.emit()" class="bg-gray-200 px-4 py-2 rounded text-sm text-gray-700">Cancelar</button>
+        <button type="submit" [disabled]="form.invalid" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm hover:bg-indigo-700">
+          Enviar
+        </button>
+        </div>
+      </form>
+
+      <button (click)="cancel.emit()"
+        class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 focus:ring-2 focus:outline-none focus:ring-gray-600"
+        aria-label="Fechar modal">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="20" height="20"
+          viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
   </div>
 </div>

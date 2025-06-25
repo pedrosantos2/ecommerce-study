@@ -5,6 +5,6 @@
 }
 
 .second-container{
-    @apply bg-white w-11/12 h-5/6 shadow-2xl rounded-2xl;
+    @apply bg-white w-5/6 h-5/6 shadow-2xl rounded-2xl;
 }
 

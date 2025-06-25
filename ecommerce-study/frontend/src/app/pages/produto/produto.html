@@ -35,11 +35,14 @@
   </div>
 
   <!-- Modal de Cadastro (apenas quando showModal for true) -->
-  <app-modalform
-    *ngIf="showModal"
-    (cancel)="closeModal()"
-    (submitted)="onProductAdded()">
-  </app-modalform>
+<app-modalform
+  *ngIf="showModal"
+  [fields]="produtoFields"
+  [postUrl]="'http://localhost:8080/home/produtos'"
+  (cancel)="closeModal()"
+  (submitted)="handleProdutoSubmit($event)">
+</app-modalform>
+
 
   <!-- Tabela de Produtos (sempre visível) -->
   <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">

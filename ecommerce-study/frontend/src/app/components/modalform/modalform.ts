@@ -1,44 +1,56 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { CommonModule }           from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators }    from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { FieldConfig } from '../../model/field-config';
+
 
 @Component({
   selector: 'app-modalform',
-  standalone: true,            // ← necessário
+  standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,       // ← traga o módulo de forms reativos
-    HttpClientModule
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
   templateUrl: './modalform.html',
   styleUrls: ['./modalform.css']
 })
-export class Modalform {
+export class Modalform implements OnInit {
+  @Input() fields: FieldConfig[] = [];
+  @Input() postUrl: string = '';
   @Output() cancel = new EventEmitter<void>();
-  @Output() submitted = new EventEmitter<void>();  
+  @Output() submitted = new EventEmitter<any>();
 
-  form: FormGroup;
+
+  form!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient
-  ) {
-    this.form = this.fb.group({
-      nome: ['', Validators.required],
-      descricao: ['', Validators.required],
-      preco: [0.0, Validators.required],
-      categoriaId: [0, Validators.required]
+  ) {}
+
+  ngOnInit() {
+    const group: any = {};
+    this.fields.forEach(field => {
+      group[field.name] = ['', field.validators || []];
     });
+    this.form = this.fb.group(group);
   }
 
   onSubmit() {
-    if (this.form.invalid) { return; }
+    if (this.form.invalid) return;
 
-    this.http.post('http://localhost:8080/home/produtos', this.form.value)
-      .subscribe({
-        next: () => this.submitted.emit(),
+    const data = this.form.value;
+    console.log('Enviando:', data);
+
+    if(this.postUrl) {
+      this.http.post(this.postUrl, this.form.value).subscribe({
+        next: () => this.submitted.emit(this.form.value),
         error: err => console.error('Erro ao enviar:', err)
       });
+    } else {
+      this.submitted.emit(this.form.value);
+    }
   }
 }
