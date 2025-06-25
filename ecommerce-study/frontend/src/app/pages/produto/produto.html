@@ -1,0 +1,96 @@
+<!-- produto.component.html -->
+<div class="bg-white p-8 rounded-md w-full">
+
+  <!-- Cabeçalho: Título e Botão -->
+  <div class="flex items-center justify-between pb-6">
+    <div>
+      <h2 class="text-gray-600 font-semibold">Produtos</h2>
+      <span class="text-xs">Todos os Produtos</span>
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <!-- Caixa de Busca -->
+      <div class="flex bg-gray-50 items-center p-2 rounded-md">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="h-5 w-5 text-gray-400"
+             viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clip-rule="evenodd" />
+        </svg>
+        <input
+          class="bg-gray-50 ml-1 outline-none block"
+          type="text"
+          placeholder="Buscar..."
+          />
+      </div>
+
+      <!-- Botão abre modal -->
+      <button
+        (click)="openModal()"
+        class="bg-indigo-600 px-4 py-2 rounded-md text-white tracking-wide">
+        Novo Produto
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de Cadastro (apenas quando showModal for true) -->
+  <app-modalform
+    *ngIf="showModal"
+    (cancel)="closeModal()"
+    (submitted)="onProductAdded()">
+  </app-modalform>
+
+  <!-- Tabela de Produtos (sempre visível) -->
+  <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+    <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
+      <table class="min-w-full leading-normal">
+        <thead>
+          <tr>
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Nome
+            </th>
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Descrição
+            </th>
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Categoria
+            </th>
+            <th
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Preço
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- itera sobre products carregados no ngOnInit -->
+          <tr *ngFor="let p of products">
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              {{ p.nome }}
+            </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              {{ p.descricao }}
+            </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              {{ p.categoria.nome }}
+            </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              {{ p.preco | currency:'BRL':'symbol':'1.2-2' }}
+            </td>
+          </tr>
+
+          <!-- mensagem quando não há produtos -->
+          <tr *ngIf="products.length === 0">
+            <td colspan="4" class="px-5 py-5 border-b border-gray-200 bg-white text-center text-gray-500">
+              Nenhum produto encontrado.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,11 @@
+@reference "tailwindcss";
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.main{
+    @apply flex flex-row h-full w-full;
+}

@@ -1,0 +1,53 @@
+<div class="overlay">
+  <div class="modal">
+    <h2>Cadastro de Produto</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- Nome -->
+      <div class="field">
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" formControlName="nome"/>
+        <div *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" class="error">
+          Nome é obrigatório.
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      <div class="field">
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" formControlName="descricao"></textarea>
+        <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="error">
+          Descrição é obrigatória.
+        </div>
+      </div>
+
+      <!-- Preço -->
+      <div class="field">
+        <label for="preco">Preço</label>
+        <input id="preco" type="number" formControlName="preco"/>
+        <div *ngIf="form.get('preco')?.invalid && form.get('preco')?.touched" class="error">
+          Informe um preço válido.
+        </div>
+      </div>
+
+      <!-- Categoria -->
+      <div class="field">
+        <label for="categoriaId">Categoria</label>
+        <select id="categoriaId" formControlName="categoriaId">
+          <option [value]="0" disabled>Selecione...</option>
+          <option [value]="1">Categoria A</option>
+          <option [value]="2">Categoria B</option>
+          <!-- adicione as opções reais aqui -->
+        </select>
+        <div *ngIf="form.get('categoriaId')?.invalid && form.get('categoriaId')?.touched" class="error">
+          Selecione uma categoria.
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="actions">
+        <button type="button" (click)="cancel.emit()">Cancelar</button>
+        <button type="submit" [disabled]="form.invalid">Enviar</button>
+      </div>
+    </form>
+  </div>
+</div>
