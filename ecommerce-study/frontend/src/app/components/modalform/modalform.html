@@ -2,8 +2,6 @@
   <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
     <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400">
 
-      <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4">Formulário Dinâmico</h1>
-
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <ng-container *ngFor="let field of fields">
           <label [for]="field.name" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
@@ -31,7 +29,7 @@
           </ng-container>
 
           <div *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched" class="text-red-500 text-xs mb-2">
-            {{ field.label }} é obrigatório.
+            {{ field.label }} � obrigat�rio.
           </div>
         </ng-container>
 

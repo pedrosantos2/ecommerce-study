@@ -1,7 +1,7 @@
 @reference "tailwindcss";
 
 .title{
-    @apply text-2xl font-bold px-10 pt-5 flex flex-row items-center;
+    @apply text-2xl font-bold px-10 pt-5 flex flex-row items-center mb-5; 
 }
 
 .title h1:last-child{

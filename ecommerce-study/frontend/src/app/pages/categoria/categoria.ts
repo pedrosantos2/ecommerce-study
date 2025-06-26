@@ -1,22 +1,41 @@
-import { Component } from '@angular/core';
-import { Modalform } from '../../components/modalform/modalform';
-import { categoriaFields } from '../../model/categoriaFields';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit }         from '@angular/core';
+import { CommonModule }              from '@angular/common';
+import { FormsModule }               from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { Modalform }                 from '../../components/modalform/modalform';
+import { NgxPaginationModule }       from 'ngx-pagination';
+
 import { CategoriaModel } from '../../model/categoriaModel';
+import { categoriaFields } from '../../model/categoriaFields';
 
 @Component({
   selector: 'app-categoria',
-  imports: [ CommonModule,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,        // ← necessário para [(ngModel)]
     HttpClientModule,
-    Modalform],
+    Modalform,
+    NgxPaginationModule // ← paginação
+  ],
   templateUrl: './categoria.html',
-  styleUrl: './categoria.css'
+  styleUrls: ['./categoria.css']
 })
-export class Categoria {
+export class Categoria implements OnInit {
   categorias: CategoriaModel[] = [];
+
+  // **busca**
+  searchTerm: string = '';
+
+  // **paginação**
+  page = 1;
+  itemsPerPage = 6;
+
   showModal = false;
+  selectedCategory: CategoriaModel | null = null;
   categoriaFields = categoriaFields;
+
+  private baseUrl = 'http://localhost:8080/home/categorias';
 
   constructor(private http: HttpClient) {}
 
@@ -24,32 +43,49 @@ export class Categoria {
     this.loadCategories();
   }
 
-   private loadCategories(): void {
-    this.http.get<CategoriaModel[]>('http://localhost:8080/home/categorias')
+  private loadCategories(): void {
+    this.http.get<CategoriaModel[]>(this.baseUrl)
       .subscribe({
-        next: data => {
-          console.log('categorias carregadas:', data);
-          this.categorias = data;
-        },
-        error: err => console.error('Erro ao carregar categorias', err)
+        next: data => this.categorias = data,
+        error: err  => console.error('Erro ao carregar categorias', err)
       });
   }
 
-  openModal() {
-    this.showModal = true;
+  // **getter que aplica o filtro**
+  get filteredCategorias(): CategoriaModel[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) return this.categorias;
+    return this.categorias.filter(c =>
+      c.nome.toLowerCase().includes(term)
+    );
   }
 
-  closeModal() {
-    this.showModal = false;
+  openModal(): void   { this.selectedCategory = null; this.showModal = true; }
+  editCategory(c: CategoriaModel): void { this.selectedCategory = c; this.showModal = true; }
+  closeModal(): void  { this.showModal = false; }
+
+  handleCategoriaSubmit(formData: any): void {
+    const isEdit = !!this.selectedCategory;
+    const url = isEdit
+      ? `${this.baseUrl}/${this.selectedCategory!.id}`
+      : this.baseUrl;
+
+    const req$ = isEdit
+      ? this.http.put(url, formData)
+      : this.http.post(url, formData);
+
+    req$.subscribe({
+      next: () => { this.closeModal(); this.loadCategories(); },
+      error: err => console.error(isEdit ? 'Erro ao atualizar' : 'Erro ao criar', err)
+    });
   }
 
-   onProductAdded(): void {
-    this.closeModal();
-    this.loadCategories();
+  deleteCategory(id: number): void {
+    if (!confirm('Confirma exclusão desta categoria?')) return;
+    this.http.delete(`${this.baseUrl}/${id}`)
+      .subscribe({
+        next: () => this.loadCategories(),
+        error: err => console.error('Erro ao excluir categoria', err)
+      });
   }
-
-  handleCategoriaSubmit(categoriaData: any) {
-    console.log('Categoria enviada:', categoriaData);
-  }
-
 }

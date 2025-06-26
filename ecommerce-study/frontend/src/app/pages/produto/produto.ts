@@ -1,26 +1,45 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit }        from '@angular/core';
+import { CommonModule }             from '@angular/common';
+import { FormsModule }              from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { Modalform } from '../../components/modalform/modalform';
-import { Product } from '../../model/produto';
-import { produtoFields } from '../../model/produtofields';
+import { Modalform }                from '../../components/modalform/modalform';
+import { NgxPaginationModule }      from 'ngx-pagination';
 
+import { Product }        from '../../model/produto';
+import { FieldConfig }    from '../../model/field-config';
+import { produtoFields as baseFields } from '../../model/produtofields';
+
+interface Category { id: number; nome: string; }
 
 @Component({
   selector: 'app-produto',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,            // ← para ngModel
     HttpClientModule,
-    Modalform
+    Modalform,
+    NgxPaginationModule     // ← paginação
   ],
   templateUrl: './produto.html',
-  styleUrls:   ['./produto.css']
+  styleUrls: ['./produto.css']
 })
 export class Produto implements OnInit {
   products: Product[] = [];
+
+  // **busca**
+  searchTerm: string = '';
+
+  // **paginação**
+  page = 1;
+  itemsPerPage = 6;
+
+  produtoFields: FieldConfig[] = [];
   showModal = false;
-  produtoFields = produtoFields;
+  selectedProduct: Product | null = null;
+
+  private produtosUrl   = 'http://localhost:8080/home/produtos';
+  private categoriasUrl = 'http://localhost:8080/home/categorias';
 
   constructor(private http: HttpClient) {}
 
@@ -28,31 +47,33 @@ export class Produto implements OnInit {
     this.loadProducts();
   }
 
-   private loadProducts(): void {
-    this.http.get<Product[]>('http://localhost:8080/home/produtos')
+  private loadProducts(): void {
+    this.http.get<Product[]>(this.produtosUrl)
       .subscribe({
-        next: data => {
-          console.log('produtos carregados:', data);
-          this.products = data;
-        },
-        error: err => console.error('Erro ao carregar produtos', err)
+        next: data => this.products = data,
+        error: err   => console.error('Erro ao carregar produtos', err)
       });
   }
 
-  openModal() {
-    this.showModal = true;
+  // **getter que filtra nome|descrição|categoria**
+  get filteredProducts(): Product[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) return this.products;
+    return this.products.filter(p =>
+      p.nome.toLowerCase().includes(term) ||
+      p.descricao.toLowerCase().includes(term) ||
+      p.categoria.nome.toLowerCase().includes(term)
+    );
   }
 
-  closeModal() {
-    this.showModal = false;
-  }
+  get lastFourProducts(): Product[] {
+  return [...this.filteredProducts].slice(-4);
+}
 
-   onProductAdded(): void {
-    this.closeModal();
-    this.loadProducts();
-  }
 
-  handleProdutoSubmit(produtoData: any) {
-    console.log('Produto enviado:', produtoData);
-  }
+  async openModal(): Promise<void>   { /* ...já tinha */ }
+  async editProduct(p: Product): Promise<void> { /* ... */ }
+  closeModal(): void                { /* ... */ }
+  handleProdutoSubmit(data: any): void { /* ... */ }
+  deleteProduct(id: number): void   { /* ... */ }
 }

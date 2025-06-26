@@ -1,13 +1,24 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Sidebar } from "./components/sidebar/sidebar";
-import { Container } from "./components/container/container";
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './auth/auth.interceptor';  
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, Container],
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    HttpClientModule      
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
 export class App {
   protected title = 'frontend';
