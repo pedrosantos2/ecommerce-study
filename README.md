@@ -13,7 +13,7 @@ O banco de dados (PostgreSQL) é executado em um container Docker e gerenciado v
 
 * **Java 21**
 * **Spring Boot**
-* **PostgreSQL** (imagem oficial Docker)
+* **MySQL** (imagem oficial Docker)
 * **Angular** (v18+)
 * **Node.js 20**
 * **Tailwind CSS**
@@ -38,13 +38,12 @@ root/
 ├── backend/               # Aplicação Spring Boot
 │   ├── src/
 │   ├── pom.xml
-│   └── Dockerfile         # Para empacotar como imagem Java
+│   └── docker-compose.yml        # Para empacotar como imagem MYSQL
 ├── frontend/              # Aplicação Angular
 │   ├── src/
 │   ├── package.json
 │   └── tailwind.config.js
-├── docker-compose.yml     # Banco de dados PostgreSQL
-└── README.md              # Este arquivo
+└── README.md              
 ```
 
 ---
@@ -59,7 +58,7 @@ root/
    docker-compose up -d
    ```
 
-3. Isso criará um container **PostgreSQL** na porta `5432` com um database e usuário configurados.
+3. Isso criará um container **MYSQL** na porta `3002` com um database e usuário configurados.
 
 ---
 
