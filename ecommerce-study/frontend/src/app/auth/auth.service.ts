@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Router }     from '@angular/router';
 
+// src/app/auth/auth.service.ts
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly TOKEN_KEY = 'jwt';
@@ -21,9 +22,19 @@ export class AuthService {
   }
 
   logout(): void {
-    // remove o JWT e redireciona para login
     localStorage.removeItem(this.TOKEN_KEY);
     this.router.navigate(['/login']);
   }
-}
 
+  /** Decodifica o JWT e retorna o campo `sub` (username) */
+  getUsername(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub as string;
+    } catch {
+      return null;
+    }
+  }
+}
